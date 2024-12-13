@@ -1,2 +1,12 @@
-ipkernel
+azure-ai-documentintelligence
+jupyterlab
+ipykernel
 python-env
+wandb
+torch
+peft
+transformers
+trl
+pandas
+huggingface_hub
+bitsandbytes

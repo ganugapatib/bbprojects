@@ -47,7 +47,7 @@ class DocumentIntelligenceImpl:
                 if result.styles and any(
                     [style.is_handwritten for style in result.styles]
                 ):
-                    print("Document contains handwritten content")
+                    print("Detected handwritten content")
                     # fw.write("Document contains handwritten content")
                 else:
                     print("Document does not contain handwritten content")
@@ -55,7 +55,7 @@ class DocumentIntelligenceImpl:
 
                 for page in result.pages:
                     print(f"----Analyzing layout from page #{page.page_number}----")
-                    fw.write(f"----Analyzing layout from page #{page.page_number}----")
+                    fw.write(f"page #{page.page_number}----")
                     print(
                         f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
                     )
@@ -71,17 +71,19 @@ class DocumentIntelligenceImpl:
                                     print(
                                         f"......Word '{word.content}' has a confidence of {word.confidence}"
                                     )
-                                    fw.write(f"'{word.content}'")
+                                    # fw.write(
+                                    #     f"......Word '{word.content}' has a confidence of {word.confidence}"
+                                    # )
                                     if self._in_span(word, line.spans):
                                         words.append(word)
                             print(
                                 f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
                                 f"within bounding polygon '{self._format_polygon(line.polygon)}'"
                             )
-                            # fw.write(
-                            #     f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                            #     f"within bounding polygon '{self._format_polygon(line.polygon)}'"
-                            # )
+                            fw.write(
+                                f"{line.content}"
+                                # f"within polygon '{self._format_polygon(line.polygon)}'"
+                            )
 
                     if page.selection_marks:
                         for selection_mark in page.selection_marks:
@@ -98,9 +100,9 @@ class DocumentIntelligenceImpl:
                     print(
                         f"----Detected #{len(result.paragraphs)} paragraphs in the document----"
                     )
-                    # fw.write(
-                    #     f"----Detected #{len(result.paragraphs)} paragraphs in the document----"
-                    # )
+                    fw.write(
+                        f"----Detected #{len(result.paragraphs)} paragraphs in the document----"
+                    )
                     # Sort all paragraphs by span's offset to read in the right order.
                     result.paragraphs.sort(
                         key=lambda p: (
@@ -153,7 +155,7 @@ class DocumentIntelligenceImpl:
                             f"{table.column_count} columns"
                         )
                         fw.write(
-                            f"Table # {table_idx} has {table.row_count} rows and "
+                            f"DETECTING Table # {table_idx} has {table.row_count} rows and "
                             f"{table.column_count} columns"
                         )
                         if table.bounding_regions:
@@ -161,24 +163,22 @@ class DocumentIntelligenceImpl:
                                 print(
                                     f"Table # {table_idx} location on page: {region.page_number} is {self._format_polygon(region.polygon)}"
                                 )
-                                fw.write(
-                                    f"Table # {table_idx} location on page: {region.page_number} is {self._format_polygon(region.polygon)}"
-                                )
+                                # fw.write(
+                                #     f"Table # {table_idx} location on page: {region.page_number} is {self._format_polygon(region.polygon)}"
+                                # )
                         for cell in table.cells:
                             print(
                                 f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
                             )
-                            fw.write(
-                                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-                            )
+                            fw.write(f"'{cell.content}'")
                             if cell.bounding_regions:
                                 for region in cell.bounding_regions:
                                     print(
                                         f"...content on page {region.page_number} is within bounding polygon '{self._format_polygon(region.polygon)}'"
                                     )
-                                    fw.write(
-                                        f"...content on page {region.page_number} is within bounding polygon '{self._format_polygon(region.polygon)}'"
-                                    )
+                                    # fw.write(
+                                    #     f"...content on page {region.page_number} is within bounding polygon '{self._format_polygon(region.polygon)}'"
+                                    # )
 
         print("----------------------------------------")
 
